@@ -33,17 +33,16 @@ npm i expo-idnow-auto-ident
 
 Run `npx pod-install` after installing the npm package.
 
-add permisions to use camera for ios 
+Optionally, add permissions to use camera for ios if you want your custom message. Otherwise the plugin will use the default message.
 ```json
 "expo": {
     "ios": {
       "infoPlist": {
-        "NSCameraUsageDescription": "This app uses the camera to scan your face. :)",
-        "NSPhotoLibraryUsageDescription": "This can request access to your photo library to upload documents."
+        "NSCameraUsageDescription": "Allow Camera Access for Video Identification",
+        "NSPhotoLibraryUsageDescription": "Allow Camera Access for Video Identification"
       }
     }
-  }
-
+}
 ```
 
 ### Configure for Android
@@ -82,5 +81,45 @@ and verify that repository and minSdk versions are added correctly.
 # Contributing
 In order to maintain this library it will often need to be updated with changes thats comming from Idnow sdks.
 
-# Testing on Example App
+# Usage and testing on Example App
+
+Import from the package `expo-idnow-auto-ident` (unlike the example app).
+
+```jsx
+import * as IdNowAutoIdent from "expo-idnow-auto-ident";
+import {
+  AutoIdentResponseDescriptions,
+  IdNowLanguage,
+} from "expo-idnow-auto-ident";
+import { Platform, StyleSheet, Text, View } from "react-native";
+import { useAsyncEffect } from "use-async-effect";
+
+const language = IdNowLanguage.en;
+
+export default function App() {
+  useAsyncEffect(async () => {
+    if (Platform.OS === "android") {
+      const result = await IdNowAutoIdent.autoIdentInitAndroid(language);
+      console.log("IdNowAutoIdent initAndroid", result);
+    }
+    const result = await IdNowAutoIdent.startAutoIdent(
+      "TST-BRLYCD-KN",
+      language,
+    );
+    if (!result) return;
+    const errorCode = result.errorCode;
+    if (errorCode) {
+      const errorMessage = AutoIdentResponseDescriptions[errorCode];
+      console.log(`IdNowAutoIdent error: ${errorCode} ${errorMessage}`);
+    }
+    console.log(`IdNowAutoIdent  ended with status: ${result.status}`);
+  }, []);
+
+  return (
+    <View>
+      <Text>Starting...</Text>
+    </View>
+  );
+}
+```
 

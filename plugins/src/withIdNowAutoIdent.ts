@@ -1,3 +1,5 @@
+import { InfoPlist, withInfoPlist } from "@expo/config-plugins";
+
 const {
   withDangerousMod,
   withPlugins,
@@ -148,17 +150,17 @@ function withMavenArtifactory(config) {
   return withPlugins(config, [
     (config) => {
       return withDangerousMod(config, [
-        'android',
+        "android",
         async (config) => {
           const file = path.join(
             config.modRequest.platformProjectRoot,
-            'build.gradle'
+            "build.gradle",
           );
 
           const contents = await readFile(file);
           const newContents = contents.replace(
-            'allprojects {\n    repositories {',
-            mavenArtifactory
+            "allprojects {\n    repositories {",
+            mavenArtifactory,
           );
           /*
            * Now re-adds the content
@@ -170,8 +172,6 @@ function withMavenArtifactory(config) {
     },
   ]);
 }
-
-
 
 function manageBuildGradle(config) {
   config = withPlugins(config, [
@@ -206,10 +206,29 @@ function manageBuildGradle(config) {
   return config;
 }
 
+function setInfoPlistConfig(infoPlist: InfoPlist): InfoPlist {
+  if (!infoPlist.NSCameraUsageDescription)
+    infoPlist.NSCameraUsageDescription =
+      "Allow Camera Access for Video Identification";
+  if (!infoPlist.NSPhotoLibraryUsageDescription)
+    infoPlist.NSPhotoLibraryUsageDescription =
+      "Allow Library Access for Video Identification";
+
+  return infoPlist;
+}
+
+function manageIosInfoPlist(config) {
+  return withInfoPlist(config, (config) => {
+    config.modResults = setInfoPlistConfig(config.modResults);
+    return config;
+  });
+}
+
 declare let module: any;
 module.exports = (config, data) =>
   withPlugins(config, [
     [manageAndroidManifest, data],
     [manageBuildGradle, data],
     [withMavenArtifactory, data],
+    [manageIosInfoPlist, data],
   ]);
