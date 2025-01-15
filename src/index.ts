@@ -33,6 +33,11 @@ export enum IdNowLanguage {
   zh = "zh", // Chinese
 }
 
+export type AutoIdentResult = {
+  status: "CANCELLED" | "FINISHED" | "ERROR" | "UNKNOWN";
+  errorCode: keyof typeof AutoIdentResponseDescriptions;
+};
+
 export async function startAutoIdent(
   token: string,
   language: IdNowLanguage = IdNowLanguage.en,
@@ -40,13 +45,8 @@ export async function startAutoIdent(
   const identOBJ = await IdNowAutoIdentModule.start(token, language);
 
   try {
-    const parsedObject = JSON.parse(identOBJ);
-    if (parsedObject) {
-      return parsedObject;
-    } else {
-      return null;
-    }
-  } catch (error) {
+    return JSON.parse(identOBJ) as AutoIdentResult;
+  } catch {
     return null;
   }
 }

@@ -55,17 +55,13 @@ afterEvaluate {
 
 android {
 compileSdkVersion safeExtGet("compileSdkVersion", 33)
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
 
-  def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
-  if (agpVersion.tokenize('.')[0].toInteger() < 8) {
-    compileOptions {
-      sourceCompatibility JavaVersion.VERSION_11
-      targetCompatibility JavaVersion.VERSION_11
-    }
-
-    kotlinOptions {
-      jvmTarget = JavaVersion.VERSION_11.majorVersion
-    }
+  kotlinOptions {
+    jvmTarget = '17'
   }
 
   namespace "com.enso.idnowautoident"
@@ -94,5 +90,5 @@ repositories {
 dependencies {
   implementation project(':expo-modules-core')
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${getKotlinVersion()}"
-  implementation "de.idnow.android.sdk:idnow-platform:5.6.0"
+  implementation "de.idnow.android.sdk:idnow-platform:5.12.0"
 }
