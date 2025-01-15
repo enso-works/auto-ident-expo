@@ -28,7 +28,9 @@
   "author": "Ensar Bavrk <ensar.bavrk@gmail.com> ()",
   "license": "MIT",
   "homepage": "https://enso.works",
-  "dependencies": {},
+  "dependencies": {
+    "use-async-effect": "^2.2.7"
+  },
   "devDependencies": {
     "@types/react": "^18.0.25",
     "expo-module-scripts": "^3.0.11",

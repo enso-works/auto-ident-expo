@@ -15,7 +15,7 @@ func convertToJsonString<T: Encodable>(data: T) -> String? {
 
 struct IdentResult : Codable {
     var status: String
-    var description: String
+    var errorCode: String
 }
 
 
@@ -35,7 +35,7 @@ func turnResultToString(result: IDNowSDK.IdentResult.type) -> String {
         return "FINISHED"
     }
     return "ERROR"
-    
+
 }
 
 public class IdNowAutoIdentModule: Module {
@@ -45,9 +45,9 @@ public class IdNowAutoIdentModule: Module {
     AsyncFunction("start") { (token: String, preferredLanguage: String, promise: Promise) in
       if let rootViewController = UIApplication.shared.delegate?.window??.rootViewController {
         IDNowSDK.shared.start(token: token, preferredLanguage:preferredLanguage, fromViewController: rootViewController, listener:{(result: IDNowSDK.IdentResult.type, statusCode: IDNowSDK.IdentResult.statusCode, message: String) in
-            let idkRes = IdentResult(status: turnResultToString(result: result), description: statusCode.description)
+            let idkRes = IdentResult(status: turnResultToString(result: result), errorCode: statusCode.description)
             promise.resolve(generateJSON(result: idkRes))
-                
+
         })
       } else {
           promise.resolve("failed to identify rootViewControler")
