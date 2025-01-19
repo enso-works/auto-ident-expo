@@ -38,6 +38,6 @@ Pod::Spec.new do |s|
     "Frameworks/FaceTecSDK.xcframework/**/*",
     "Frameworks/IDNowSDKCore.xcframework/**/*"
   ]
-  s.dependency 'XS2AiOS'
+  s.dependency 'XS2AiOSNetService'
   s.source_files = "**/*.{h,m,swift}"
 end

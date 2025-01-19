@@ -1,6 +1,5 @@
-import { InfoPlist, withInfoPlist } from "@expo/config-plugins";
-
 const {
+  withInfoPlist,
   withDangerousMod,
   withPlugins,
   withAndroidManifest,
@@ -17,13 +16,13 @@ async function saveFile(path, content) {
 }
 
 function manageAndroidManifest(config) {
-  config = withAndroidManifest(config, async (config) => {
+  return withAndroidManifest(config, async (config) => {
     const androidManifest = config.modResults.manifest;
     const permisions = androidManifest["uses-permission"];
     if (permisions) {
       if (
         permisions.find(
-          (per) => per["$"]["android:name"] !== "android.permission.INTERNET",
+          (per) => per.$["android:name"] !== "android.permission.INTERNET",
         )
       ) {
         androidManifest["uses-permission"].push({
@@ -34,7 +33,7 @@ function manageAndroidManifest(config) {
       }
       if (
         permisions.find(
-          (per) => per["$"]["android:name"] !== "android.permission.CAMERA",
+          (per) => per.$["android:name"] !== "android.permission.CAMERA",
         )
       ) {
         androidManifest["uses-permission"].push({
@@ -46,8 +45,7 @@ function manageAndroidManifest(config) {
       if (
         permisions.find(
           (per) =>
-            per["$"]["android:name"] !==
-            "android.permission.ACCESS_NETWORK_STATE",
+            per.$["android:name"] !== "android.permission.ACCESS_NETWORK_STATE",
         )
       ) {
         androidManifest["uses-permission"].push({
@@ -58,7 +56,7 @@ function manageAndroidManifest(config) {
       }
       if (
         permisions.find(
-          (per) => per["$"]["android:name"] !== "android.permission.FLASHLIGHT",
+          (per) => per.$["android:name"] !== "android.permission.FLASHLIGHT",
         )
       ) {
         androidManifest["uses-permission"].push({
@@ -70,8 +68,7 @@ function manageAndroidManifest(config) {
       if (
         permisions.find(
           (per) =>
-            per["$"]["android:name"] !==
-            "android.permission.FOREGROUND_SERVICE",
+            per.$["android:name"] !== "android.permission.FOREGROUND_SERVICE",
         )
       ) {
         androidManifest["uses-permission"].push({
@@ -83,7 +80,7 @@ function manageAndroidManifest(config) {
       if (
         permisions.find(
           (per) =>
-            per["$"]["android:name"] !== "android.permission.READ_MEDIA_IMAGES",
+            per.$["android:name"] !== "android.permission.READ_MEDIA_IMAGES",
         )
       ) {
         androidManifest["uses-permission"].push({
@@ -95,8 +92,7 @@ function manageAndroidManifest(config) {
       if (
         permisions.find(
           (per) =>
-            per["$"]["android:name"] !==
-            "android.permission.POST_NOTIFICATIONS",
+            per.$["android:name"] !== "android.permission.POST_NOTIFICATIONS",
         )
       ) {
         androidManifest["uses-permission"].push({
@@ -133,8 +129,8 @@ function manageAndroidManifest(config) {
 
     return config;
   });
-  return config;
 }
+
 /*
 const withMavenArtifactory = contents.replace(
   "allprojects {",
@@ -174,7 +170,7 @@ function withMavenArtifactory(config) {
 }
 
 function manageBuildGradle(config) {
-  config = withPlugins(config, [
+  return withPlugins(config, [
     (config) => {
       return withDangerousMod(config, [
         "android",
@@ -187,26 +183,23 @@ function manageBuildGradle(config) {
 
           if (contents.includes("renderscriptTargetApi 21")) {
             return config;
-          } else {
-            const newContents = contents.replace(
-              "defaultConfig {",
-              `defaultConfig {
+          }
+          const newContents = contents.replace(
+            "defaultConfig {",
+            `defaultConfig {
         renderscriptTargetApi 21
         renderscriptSupportModeEnabled true
         vectorDrawables.useSupportLibrary = true`,
-            );
-            await saveFile(file, newContents);
-            return config;
-          }
+          );
+          await saveFile(file, newContents);
+          return config;
         },
       ]);
     },
   ]);
-
-  return config;
 }
 
-function setInfoPlistConfig(infoPlist: InfoPlist): InfoPlist {
+function setInfoPlistConfig(infoPlist) {
   if (!infoPlist.NSCameraUsageDescription)
     infoPlist.NSCameraUsageDescription =
       "Allow Camera Access for Video Identification";
@@ -224,11 +217,33 @@ function manageIosInfoPlist(config) {
   });
 }
 
-declare let module: any;
+function withXS2APodfile(config) {
+  return withDangerousMod(config, [
+    "ios",
+    async (config) => {
+      const file = path.join(config.modRequest.platformProjectRoot, "Podfile");
+      const contents = await readFile(file);
+
+      if (contents.includes("pod 'XS2AiOSNetService'")) {
+        return config;
+      }
+
+      const newContents = contents.replace(
+        /target ['"](.+?)['"] do/,
+        `target '$1' do\n  pod 'XS2AiOSNetService', :git => 'https://github.com/FinTecSystems/xs2a-ios-netservice.git', :branch => 'master'`,
+      );
+
+      await saveFile(file, newContents);
+      return config;
+    },
+  ]);
+}
+
 module.exports = (config, data) =>
   withPlugins(config, [
     [manageAndroidManifest, data],
     [manageBuildGradle, data],
     [withMavenArtifactory, data],
     [manageIosInfoPlist, data],
+    [withXS2APodfile, data],
   ]);
