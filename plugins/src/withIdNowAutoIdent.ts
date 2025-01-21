@@ -22,7 +22,7 @@ function manageAndroidManifest(config) {
     if (permisions) {
       if (
         permisions.find(
-          (per) => per.$["android:name"] !== "android.permission.INTERNET",
+          (per) => per.$["android:name"] !== "android.permission.INTERNET"
         )
       ) {
         androidManifest["uses-permission"].push({
@@ -33,7 +33,7 @@ function manageAndroidManifest(config) {
       }
       if (
         permisions.find(
-          (per) => per.$["android:name"] !== "android.permission.CAMERA",
+          (per) => per.$["android:name"] !== "android.permission.CAMERA"
         )
       ) {
         androidManifest["uses-permission"].push({
@@ -45,7 +45,7 @@ function manageAndroidManifest(config) {
       if (
         permisions.find(
           (per) =>
-            per.$["android:name"] !== "android.permission.ACCESS_NETWORK_STATE",
+            per.$["android:name"] !== "android.permission.ACCESS_NETWORK_STATE"
         )
       ) {
         androidManifest["uses-permission"].push({
@@ -56,7 +56,7 @@ function manageAndroidManifest(config) {
       }
       if (
         permisions.find(
-          (per) => per.$["android:name"] !== "android.permission.FLASHLIGHT",
+          (per) => per.$["android:name"] !== "android.permission.FLASHLIGHT"
         )
       ) {
         androidManifest["uses-permission"].push({
@@ -68,7 +68,7 @@ function manageAndroidManifest(config) {
       if (
         permisions.find(
           (per) =>
-            per.$["android:name"] !== "android.permission.FOREGROUND_SERVICE",
+            per.$["android:name"] !== "android.permission.FOREGROUND_SERVICE"
         )
       ) {
         androidManifest["uses-permission"].push({
@@ -80,7 +80,7 @@ function manageAndroidManifest(config) {
       if (
         permisions.find(
           (per) =>
-            per.$["android:name"] !== "android.permission.READ_MEDIA_IMAGES",
+            per.$["android:name"] !== "android.permission.READ_MEDIA_IMAGES"
         )
       ) {
         androidManifest["uses-permission"].push({
@@ -92,7 +92,7 @@ function manageAndroidManifest(config) {
       if (
         permisions.find(
           (per) =>
-            per.$["android:name"] !== "android.permission.POST_NOTIFICATIONS",
+            per.$["android:name"] !== "android.permission.POST_NOTIFICATIONS"
         )
       ) {
         androidManifest["uses-permission"].push({
@@ -150,13 +150,13 @@ function withMavenArtifactory(config) {
         async (config) => {
           const file = path.join(
             config.modRequest.platformProjectRoot,
-            "build.gradle",
+            "build.gradle"
           );
 
           const contents = await readFile(file);
           const newContents = contents.replace(
             "allprojects {\n    repositories {",
-            mavenArtifactory,
+            mavenArtifactory
           );
           /*
            * Now re-adds the content
@@ -177,7 +177,7 @@ function manageBuildGradle(config) {
         async (config) => {
           const file = path.join(
             config.modRequest.platformProjectRoot,
-            "app/build.gradle",
+            "app/build.gradle"
           );
           const contents = await readFile(file);
 
@@ -189,7 +189,7 @@ function manageBuildGradle(config) {
             `defaultConfig {
         renderscriptTargetApi 21
         renderscriptSupportModeEnabled true
-        vectorDrawables.useSupportLibrary = true`,
+        vectorDrawables.useSupportLibrary = true`
           );
           await saveFile(file, newContents);
           return config;
@@ -230,7 +230,7 @@ function withXS2APodfile(config) {
 
       const newContents = contents.replace(
         /target ['"](.+?)['"] do/,
-        `target '$1' do\n  pod 'XS2AiOSNetService', :git => 'https://github.com/FinTecSystems/xs2a-ios-netservice.git', :branch => 'master'`,
+        `target '$1' do\n  pod 'XS2AiOSNetService', :git => 'https://github.com/FinTecSystems/xs2a-ios-netservice.git', :branch => 'master'`
       );
 
       await saveFile(file, newContents);
@@ -238,6 +238,9 @@ function withXS2APodfile(config) {
     },
   ]);
 }
+
+// added this to make the ts compiler happy
+declare let module: any;
 
 module.exports = (config, data) =>
   withPlugins(config, [

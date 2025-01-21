@@ -1,6 +1,6 @@
 {
   "name": "expo-idnow-auto-ident-config-plugin",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Config plugin for android",
   "main": "./build/withIdNowAutoIdent.js",
   "repository": "https://github.com/mrFunkyWisdom/auto-ident-expo/tree/main/plugins",

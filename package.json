@@ -1,6 +1,6 @@
 {
   "name": "expo-idnow-auto-ident",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "IDnow Auto ident for Expo",
   "main": "build/index.js",
   "types": "build/index.d.ts",
