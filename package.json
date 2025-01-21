@@ -22,9 +22,9 @@
     "id-now-auto-ident",
     "IdNowAutoIdent"
   ],
-  "repository": "https://enso.works",
+  "repository": "https://github.com/enso-works/auto-ident-expo",
   "bugs": {
-    "url": "https://enso.works/issues"
+    "url": "https://github.com/enso-works/auto-ident-expo/issues"
   },
   "author": "Ensar Bavrk <ensar.bavrk@gmail.com> ()",
   "license": "MIT",
